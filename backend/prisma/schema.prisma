@@ -9,10 +9,23 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
+  id        String         @id @default(uuid())
+  email     String         @unique
   password  String
   name      String?
+  sessions  StudySession[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+model StudySession {
+  id        String   @id @default(uuid())
+  title     String
+  videoUrl  String
+  thumbnail String?
+  content   String? // Stores Rich Text HTML
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
