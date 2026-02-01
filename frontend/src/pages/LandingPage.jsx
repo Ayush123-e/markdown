@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { FiVideo, FiBook, FiZap, FiCheck, FiArrowRight, FiPlay } from "react-icons/fi";
+import { FiVideo, FiBook, FiZap, FiCheck, FiArrowRight, FiPlay, FiDownload, FiClock } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import "./LandingPage.css";
 
@@ -15,41 +15,54 @@ const LandingPage = () => {
   const features = [
     {
       icon: FiVideo,
-      title: "Video-Based Learning",
-      description: "Learn from any YouTube video with our integrated player and smart controls."
+      title: "Video-Integrated Learning",
+      description: "Transform any YouTube video into an interactive study session with seamless playback controls and real-time note synchronization."
     },
     {
       icon: FiBook,
       title: "Smart Note-Taking",
-      description: "Rich text editor with formatting, lists, and links to organize your thoughts."
+      description: "Rich text editor with advanced formatting, lists, links, and the ability to save and download your notes for offline access."
     },
     {
       icon: FiZap,
-      title: "AI Tutor Assistant",
-      description: "Get instant help from our AI tutor powered by Google Gemini."
+      title: "AI-Powered Assistant",
+      description: "Get instant answers and explanations from our intelligent tutor powered by Google Gemini, available 24/7 during your study sessions."
     }
   ];
 
-  const benefits = [
-    "Unlimited study sessions",
-    "Save and download your notes",
-    "AI-powered learning assistance",
-    "Progress tracking",
-    "Free forever"
+  const steps = [
+    {
+      number: "1",
+      title: "Paste YouTube Link",
+      description: "Simply paste any educational YouTube video URL to create a new study session instantly."
+    },
+    {
+      number: "2",
+      title: "Watch & Take Notes",
+      description: "Watch the video while taking comprehensive notes with our powerful rich text editor."
+    },
+    {
+      number: "3",
+      title: "Get AI Assistance",
+      description: "Ask questions and get instant clarifications from the AI tutor to enhance your understanding."
+    }
   ];
 
-  const stats = [
-    { number: '100%', label: 'Free Forever' },
-    { number: 'AI', label: 'Powered Tutoring' },
-    { number: '∞', label: 'Unlimited Sessions' }
+  const highlights = [
+    "Video-synchronized note-taking",
+    "AI tutor integration",
+    "Download & save notes",
+    "Unlimited study sessions"
   ];
 
   return (
     <div className="landing-page">
       {/* Hero Section */}
       <div className="landing-hero">
-        <div className="landing-hero-blob-1" />
-        <div className="landing-hero-blob-2" />
+        {/* Decorative Elements */}
+        <div className="landing-decoration landing-decoration-1" />
+        <div className="landing-decoration landing-decoration-2" />
+        <div className="landing-decoration landing-decoration-3" />
 
         {/* Navigation */}
         <nav className="landing-nav">
@@ -57,7 +70,9 @@ const LandingPage = () => {
             <div className="landing-nav-logo">
               <FiVideo size={24} style={{ color: 'white' }} />
             </div>
-            <h1 className="landing-nav-title">StudySpace</h1>
+            <h1 className="landing-nav-title">
+              Study<span>Space</span>
+            </h1>
           </div>
 
           <div className="landing-nav-buttons">
@@ -65,14 +80,6 @@ const LandingPage = () => {
               <button
                 onClick={() => navigate('/dashboard')}
                 className="landing-nav-btn-dashboard"
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.15)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.1)';
-                }}
               >
                 Go to Dashboard
               </button>
@@ -91,27 +98,44 @@ const LandingPage = () => {
 
         {/* Hero Content */}
         <div className="landing-hero-content">
-          <h1 className="landing-hero-title">Learn Smarter with AI</h1>
+          <div className="landing-hero-badge">
+            ⚡ Powered by AI Technology
+          </div>
+
+          <h1 className="landing-hero-title">
+            Master Any Subject with
+            <br />
+            <span className="highlight">AI-Powered</span> Learning
+          </h1>
+
           <p className="landing-hero-subtitle">
-            Transform any YouTube video into an interactive study session with AI-powered assistance and smart note-taking.
+            Revolutionary platform that combines video learning, intelligent note-taking,
+            and AI assistance to accelerate your learning journey and boost retention.
           </p>
 
           <div className="landing-hero-cta-wrapper">
             <Link
               to={isLoggedIn ? "/dashboard" : "/register"}
-              className="landing-hero-cta-btn"
+              className="landing-hero-cta-btn primary"
             >
               <FiPlay size={20} />
-              {isLoggedIn ? "Go to Dashboard" : "Start Learning Free"}
+              {isLoggedIn ? "Go to Dashboard" : "Start Learning Now"}
             </Link>
+            {!isLoggedIn && (
+              <Link to="/login" className="landing-hero-cta-btn secondary">
+                Sign In
+                <FiArrowRight size={20} />
+              </Link>
+            )}
           </div>
 
-          {/* Stats */}
-          <div className="landing-hero-stats">
-            {stats.map((stat, idx) => (
-              <div key={idx} className="landing-hero-stat">
-                <div className="landing-hero-stat-number">{stat.number}</div>
-                <div className="landing-hero-stat-label">{stat.label}</div>
+          <div className="landing-hero-features">
+            {highlights.map((highlight, idx) => (
+              <div key={idx} className="landing-hero-feature">
+                <div className="landing-hero-feature-icon">
+                  <FiCheck size={14} />
+                </div>
+                {highlight}
               </div>
             ))}
           </div>
@@ -121,28 +145,17 @@ const LandingPage = () => {
       {/* Features Section */}
       <div className="landing-features">
         <div className="landing-features-header">
-          <h2 className="landing-features-title">Everything You Need to Learn</h2>
+          <h2 className="landing-features-title">Powerful Features for Better Learning</h2>
           <p className="landing-features-subtitle">
-            Powerful features designed to enhance your learning experience
+            Everything you need to transform passive watching into active learning
           </p>
         </div>
 
         <div className="landing-features-grid">
           {features.map((feature, idx) => (
-            <div
-              key={idx}
-              className="landing-feature-card"
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-8px)';
-                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.12)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.06)';
-              }}
-            >
+            <div key={idx} className="landing-feature-card">
               <div className="landing-feature-icon">
-                <feature.icon size={28} style={{ color: 'white' }} />
+                <feature.icon size={32} style={{ color: '#DC2626' }} />
               </div>
               <h3 className="landing-feature-title">{feature.title}</h3>
               <p className="landing-feature-description">{feature.description}</p>
@@ -151,33 +164,36 @@ const LandingPage = () => {
         </div>
       </div>
 
+      {/* How It Works Section */}
+      <div className="landing-how-it-works">
+        <div className="landing-how-it-works-content">
+          <h2 className="landing-how-it-works-title">How It Works</h2>
+
+          <div className="landing-steps">
+            {steps.map((step, idx) => (
+              <div key={idx} className="landing-step">
+                <div className="landing-step-number">{step.number}</div>
+                <h3 className="landing-step-title">{step.title}</h3>
+                <p className="landing-step-description">{step.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* CTA Section */}
       <div className="landing-cta">
         <div className="landing-cta-content">
-          <h2 className="landing-cta-title">Ready to Start Learning?</h2>
+          <h2 className="landing-cta-title">Ready to Transform Your Learning?</h2>
           <p className="landing-cta-subtitle">
-            Join thousands of learners using AI to master new skills
+            Join thousands of students who are already learning smarter with AI-powered study sessions
           </p>
-
-          <div className="landing-cta-benefits">
-            <div className="landing-cta-benefits-list">
-              {benefits.map((benefit, idx) => (
-                <div key={idx} className="landing-cta-benefit-item">
-                  <div className="landing-cta-benefit-check">
-                    <FiCheck size={14} />
-                  </div>
-                  {benefit}
-                </div>
-              ))}
-            </div>
-          </div>
-
           <Link
             to={isLoggedIn ? "/dashboard" : "/register"}
             className="landing-cta-btn"
           >
-            {isLoggedIn ? "Go to Dashboard" : "Get Started Free"}
-            <FiArrowRight size={20} />
+            {isLoggedIn ? "Go to Dashboard" : "Get Started Now"}
+            <FiArrowRight size={24} />
           </Link>
         </div>
       </div>
@@ -185,7 +201,7 @@ const LandingPage = () => {
       {/* Footer */}
       <div className="landing-footer">
         <p className="landing-footer-text">
-          © 2026 StudySpace. Powered by AI • Made with ❤️ for learners
+          © 2026 StudySpace. Powered by Google Gemini AI • Built for learners worldwide
         </p>
       </div>
     </div>

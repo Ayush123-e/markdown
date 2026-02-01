@@ -3,9 +3,12 @@
 .register-container {
   min-height: 100vh;
   display: flex;
-  background: linear-gradient(135deg, #F093FB 0%, #F5576C 100%);
+  background: #FFFFFF;
   position: relative;
   overflow: hidden;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
 }
 
 .register-bg-blob-1 {
@@ -14,7 +17,7 @@
   left: -5%;
   width: 500px;
   height: 500px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(220, 38, 38, 0.05);
   border-radius: 50%;
   filter: blur(80px);
   animation: float 7s ease-in-out infinite;
@@ -26,7 +29,7 @@
   right: -5%;
   width: 400px;
   height: 400px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(220, 38, 38, 0.05);
   border-radius: 50%;
   filter: blur(80px);
   animation: float 9s ease-in-out infinite reverse;
@@ -133,7 +136,7 @@
 
 .register-input:focus {
   background: white;
-  border-color: #F093FB;
+  border-color: #DC2626;
 }
 
 .register-password-hint {
@@ -146,7 +149,7 @@
 .register-submit-btn {
   width: 100%;
   padding: 16px;
-  background: linear-gradient(135deg, #F093FB 0%, #F5576C 100%);
+  background: #DC2626;
   color: white;
   border: none;
   border-radius: 12px;
@@ -158,13 +161,14 @@
   justify-content: center;
   gap: 10px;
   transition: all 0.3s;
-  box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
   margin-top: 28px;
 }
 
 .register-submit-btn:hover {
+  background: #B91C1C;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(240, 147, 251, 0.5);
+  box-shadow: 0 8px 25px rgba(220, 38, 38, 0.5);
 }
 
 .register-footer {
@@ -181,7 +185,7 @@
 }
 
 .register-footer-link {
-  color: #F093FB;
+  color: #DC2626;
   font-weight: 600;
   text-decoration: none;
 }
@@ -193,6 +197,7 @@
   justify-content: center;
   align-items: center;
   padding: 60px;
+  background: #DC2626;
   color: white;
   position: relative;
   z-index: 1;

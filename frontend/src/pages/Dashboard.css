@@ -30,7 +30,7 @@
 .dashboard-navbar-logo {
   width: 40px;
   height: 40px;
-  background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+  background: #DC2626;
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -68,7 +68,7 @@
 .dashboard-session-count-number {
   font-size: 14px;
   font-weight: 700;
-  color: #4F46E5;
+  color: #DC2626;
 }
 
 .dashboard-logout-btn {
@@ -129,8 +129,8 @@
 }
 
 .dashboard-new-session-card:hover {
-  border-color: #4F46E5;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
+  border-color: #DC2626;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
 }
 
 .dashboard-new-session-header {
@@ -167,7 +167,7 @@
 
 .dashboard-title-input:focus {
   background: white;
-  border-color: #4F46E5;
+  border-color: #DC2626;
 }
 
 .dashboard-url-row {
@@ -196,12 +196,12 @@
 
 .dashboard-url-input:focus {
   background: white;
-  border-color: #4F46E5;
+  border-color: #DC2626;
 }
 
 .dashboard-submit-btn {
   padding: 14px 28px;
-  background: linear-gradient(135deg, #667EEA 0%, #4F46E5 100%);
+  background: #DC2626;
   color: white;
   border: none;
   border-radius: 8px;
@@ -213,7 +213,7 @@
   gap: 8px;
   transition: all 0.2s;
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
 }
 
 .dashboard-submit-btn:disabled {
@@ -223,8 +223,9 @@
 }
 
 .dashboard-submit-btn:not(:disabled):hover {
+  background: #B91C1C;
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
 }
 
 /* Sessions Section */

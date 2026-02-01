@@ -2,12 +2,12 @@
 
 :root {
   --bg-primary: #FFFFFF;
-  --bg-secondary: #F8F9FA;
-  --bg-tertiary: #F1F3F5;
-  --bg-hover: #E9ECEF;
-  --primary: #4F46E5;
-  --primary-hover: #4338CA;
-  --primary-light: #EEF2FF;
+  --bg-secondary: #FFF5F5;
+  --bg-tertiary: #FEE2E2;
+  --bg-hover: #FECACA;
+  --primary: #DC2626;
+  --primary-hover: #B91C1C;
+  --primary-light: #FEE2E2;
   --text-primary: #1F2937;
   --text-secondary: #6B7280;
   --text-muted: #9CA3AF;
@@ -31,6 +31,11 @@
   padding: 0;
 }
 
+html {
+  overflow-x: hidden;
+  width: 100%;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: var(--bg-secondary);
@@ -38,6 +43,9 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
 }
 
 /* Scrollbar */
@@ -168,7 +176,6 @@ body {
   position: relative;
 }
 
-/* React Quill Light Theme */
 .ql-toolbar {
   background: var(--bg-primary) !important;
   border: 1px solid var(--border-light) !important;
