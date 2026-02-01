@@ -1,47 +1,30 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ReactPlayer from "react-player";
-import ReactQuill, { Quill } from "react-quill-new";
+import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import axios from "axios";
-import { FiSave, FiClock, FiMessageSquare, FiArrowLeft, FiX, FiSend, FiVideo, FiEdit3, FiMinimize2, FiMaximize2 } from "react-icons/fi";
-
-// Register data-time as a valid attribute in Quill safely
-try {
-  const Parchment = Quill.import("parchment");
-  const AttributorConstructor = Parchment.Attributor?.Attribute || Parchment.Attributor || Parchment.Attribute;
-
-  if (typeof AttributorConstructor === 'function') {
-    const DataTimeAttr = new AttributorConstructor("data-time", "data-time", {
-      scope: Parchment.Scope.INLINE,
-    });
-    Quill.register(DataTimeAttr);
-    console.log("Registered data-time attribute successfully");
-  } else {
-    console.error("Failed to find a valid Parchment Attributor constructor", Parchment);
-  }
-} catch (e) {
-  console.error("Quill/Parchment registration failed", e);
-}
+import { FiSave, FiMessageSquare, FiArrowLeft, FiX, FiSend, FiVideo, FiEdit3, FiDownload, FiEdit2, FiCheck } from "react-icons/fi";
 
 const SessionWorkspace = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const playerRef = useRef(null);
   const quillRef = useRef(null);
-  const editorContainerRef = useRef(null);
 
   const [session, setSession] = useState(null);
   const [content, setContent] = useState("");
   const [saving, setSaving] = useState(false);
 
   // Chat state
-  const [messages, setMessages] = useState([{ role: "ai", text: "Hello! I'm your AI Tutor. Ask me anything." }]);
+  const [messages, setMessages] = useState([{ role: "ai", text: "Hello! I'm your AI Study Assistant. Ask me anything about your studies." }]);
   const [input, setInput] = useState("");
   const [notification, setNotification] = useState("");
   const [playing, setPlaying] = useState(true);
   const [chatOpen, setChatOpen] = useState(false);
   const [notesOpen, setNotesOpen] = useState(true);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editedTitle, setEditedTitle] = useState("");
 
   const modules = {
     toolbar: [
@@ -70,44 +53,6 @@ const SessionWorkspace = () => {
     fetchSession();
   }, [id]);
 
-  // Setup click listener for timestamps with the capture phase to beat the editor's internal logic
-  useEffect(() => {
-    const container = editorContainerRef.current;
-    if (!container) return;
-
-    const handleTimestampClick = (e) => {
-      const link = e.target.closest(".timestamp-link");
-      if (link) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        const time = parseFloat(link.getAttribute("data-time"));
-        console.log("Timestamp Clicked! Time:", time);
-
-        if (playerRef.current && !isNaN(time)) {
-          playerRef.current.seekTo(time, "seconds");
-          setTimeout(() => {
-            if (playerRef.current) {
-              const internalPlayer = playerRef.current.getInternalPlayer();
-              if (internalPlayer && typeof internalPlayer.playVideo === "function") {
-                internalPlayer.playVideo();
-              }
-            }
-          }, 100);
-
-          const minutes = Math.floor(time / 60);
-          const seconds = Math.floor(time % 60);
-          const formatted = `${minutes}:${seconds.toString().padStart(2, "0")}`;
-          setNotification(`Jumped to ${formatted}`);
-          setTimeout(() => setNotification(""), 2000);
-        }
-      }
-    };
-
-    container.addEventListener("click", handleTimestampClick, true);
-    return () => container.removeEventListener("click", handleTimestampClick, true);
-  }, [session, content]);
-
   const saveSession = async () => {
     setSaving(true);
     try {
@@ -127,38 +72,94 @@ const SessionWorkspace = () => {
     }
   };
 
-  const insertTimestamp = () => {
-    if (!playerRef.current || !quillRef.current) {
-      setNotification("Player or editor not ready");
+  const downloadNotes = () => {
+    if (!content || content.trim() === "") {
+      setNotification("No notes to download");
       setTimeout(() => setNotification(""), 2000);
       return;
     }
 
+    // Create HTML content with styling
+    const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${session?.title || 'Study Notes'}</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      line-height: 1.6;
+      color: #333;
+    }
+    h1 {
+      color: #4F46E5;
+      border-bottom: 3px solid #4F46E5;
+      padding-bottom: 10px;
+    }
+    .metadata {
+      color: #6B7280;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+    .content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>${session?.title || 'Study Notes'}</h1>
+  <div class="metadata">
+    <p>Downloaded on: ${new Date().toLocaleString()}</p>
+  </div>
+  <div class="content">
+    ${content}
+  </div>
+</body>
+</html>
+    `;
+
+    // Create blob and download
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${session?.title || 'notes'}.html`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    setNotification("Notes downloaded!");
+    setTimeout(() => setNotification(""), 2000);
+  };
+
+  const handleUpdateTitle = async () => {
+    if (!editedTitle.trim()) {
+      setIsEditingTitle(false);
+      return;
+    }
+
     try {
-      const currentTime = playerRef.current.getCurrentTime();
-      if (currentTime === undefined || isNaN(currentTime)) {
-        setNotification("Could not get current time");
-        setTimeout(() => setNotification(""), 2000);
-        return;
-      }
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `http://localhost:5001/api/sessions/${id}`,
+        { title: editedTitle.trim(), content },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-      const minutes = Math.floor(currentTime / 60);
-      const seconds = Math.floor(currentTime % 60);
-      const formatted = `${minutes}:${seconds.toString().padStart(2, "0")}`;
-
-      const quill = quillRef.current.getEditor();
-      const range = quill.getSelection();
-      const insertIndex = range ? range.index : quill.getLength();
-
-      const linkHtml = `<span class="timestamp-link" data-time="${currentTime}" contenteditable="false" style="color: #4F46E5; cursor: pointer; user-select: none; background: #EEF2FF; padding: 3px 10px; border-radius: 6px; font-weight: 700; font-family: monospace; border: 1px solid #4F46E5; display: inline-flex; align-items: center; gap: 4px; margin: 0 4px; transition: all 0.2s; font-size: 0.8125rem;">▶ ${formatted}</span>&nbsp;`;
-
-      quill.clipboard.dangerouslyPasteHTML(insertIndex, linkHtml);
-      quill.setSelection(insertIndex + 2, 0);
-      setNotification(`Captured at ${formatted}`);
+      setSession({ ...session, title: editedTitle.trim() });
+      setIsEditingTitle(false);
+      setNotification("Title updated!");
       setTimeout(() => setNotification(""), 2000);
-    } catch (err) {
-      console.error("Timestamp capture error:", err);
-      setNotification("Capture error");
+    } catch (error) {
+      setNotification("Failed to update title");
       setTimeout(() => setNotification(""), 2000);
     }
   };
@@ -244,7 +245,7 @@ const SessionWorkspace = () => {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/dashboard")}
             style={{
               padding: '10px 16px',
               background: 'white',
@@ -267,35 +268,95 @@ const SessionWorkspace = () => {
             borderRadius: '8px',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px'
+            gap: '8px',
+            maxWidth: '400px'
           }}>
-            <FiVideo size={16} style={{ color: '#4F46E5' }} />
-            <span style={{ fontSize: '14px', fontWeight: '600', color: '#111827' }}>
-              {session.title}
-            </span>
+            <FiVideo size={16} style={{ color: '#4F46E5', flexShrink: 0 }} />
+            {isEditingTitle ? (
+              <>
+                <input
+                  type="text"
+                  value={editedTitle}
+                  onChange={(e) => setEditedTitle(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleUpdateTitle();
+                    }
+                  }}
+                  autoFocus
+                  style={{
+                    flex: 1,
+                    padding: '4px 8px',
+                    background: 'white',
+                    border: '1px solid #4F46E5',
+                    borderRadius: '4px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#111827',
+                    outline: 'none',
+                    minWidth: '200px'
+                  }}
+                />
+                <button
+                  onClick={handleUpdateTitle}
+                  style={{
+                    padding: '4px',
+                    background: '#10B981',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <FiCheck size={14} style={{ color: 'white' }} />
+                </button>
+                <button
+                  onClick={() => setIsEditingTitle(false)}
+                  style={{
+                    padding: '4px',
+                    background: '#EF4444',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <FiX size={14} style={{ color: 'white' }} />
+                </button>
+              </>
+            ) : (
+              <>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: '#111827', flex: 1 }}>
+                  {session.title}
+                </span>
+                <button
+                  onClick={() => {
+                    setEditedTitle(session.title);
+                    setIsEditingTitle(true);
+                  }}
+                  style={{
+                    padding: '4px',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    color: '#6B7280'
+                  }}
+                  title="Edit session name"
+                >
+                  <FiEdit2 size={14} />
+                </button>
+              </>
+            )}
           </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button
-            onClick={insertTimestamp}
-            style={{
-              padding: '10px 16px',
-              background: 'white',
-              border: '1px solid #E5E7EB',
-              borderRadius: '8px',
-              color: '#6B7280',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}
-          >
-            <FiClock size={16} /> Mark Time
-          </button>
-
           <button
             onClick={() => setNotesOpen(!notesOpen)}
             style={{
@@ -313,6 +374,25 @@ const SessionWorkspace = () => {
             }}
           >
             <FiEdit3 size={16} /> Notes
+          </button>
+
+          <button
+            onClick={downloadNotes}
+            style={{
+              padding: '10px 16px',
+              background: 'white',
+              border: '1px solid #E5E7EB',
+              borderRadius: '8px',
+              color: '#6B7280',
+              fontSize: '14px',
+              fontWeight: '500',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            <FiDownload size={16} /> Download
           </button>
 
           <button
@@ -406,14 +486,14 @@ const SessionWorkspace = () => {
                   Study Notes
                 </h3>
               </div>
-              <div style={{ flex: 1, overflow: 'hidden', padding: '16px' }} ref={editorContainerRef}>
+              <div style={{ flex: 1, overflow: 'hidden', padding: '16px' }}>
                 <ReactQuill
                   ref={quillRef}
                   theme="snow"
                   value={content}
                   onChange={setContent}
                   modules={modules}
-                  placeholder="Start taking notes... Click 'Mark Time' to capture timestamps."
+                  placeholder="Start taking notes while watching the video..."
                   style={{ height: 'calc(100% - 42px)' }}
                 />
               </div>
@@ -422,12 +502,13 @@ const SessionWorkspace = () => {
         )}
       </div>
 
-      {/* AI Chat - Bottom Left Floating */}
+      {/* AI Chat - Bottom Right Floating */}
       {chatOpen && (
         <div style={{
           position: 'fixed',
           bottom: '24px',
-          left: '24px',
+          right: '24px',
+          left: 'auto',
           width: '380px',
           height: '500px',
           background: 'white',
@@ -462,7 +543,7 @@ const SessionWorkspace = () => {
               </div>
               <div>
                 <h4 style={{ fontSize: '14px', fontWeight: '600', color: 'white', margin: 0 }}>
-                  AI Study Assistant
+                  AI Tutor
                 </h4>
                 <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)', margin: 0 }}>
                   Powered by Gemini
@@ -561,14 +642,15 @@ const SessionWorkspace = () => {
         </div>
       )}
 
-      {/* AI Chat Button - Bottom Left */}
+      {/* AI Chat Button - Bottom Right */}
       {!chatOpen && (
         <button
           onClick={() => setChatOpen(true)}
           style={{
             position: 'fixed',
             bottom: '24px',
-            left: '24px',
+            right: '24px',
+            left: 'auto',
             width: '56px',
             height: '56px',
             background: '#4F46E5',
