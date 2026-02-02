@@ -3,8 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import ReactPlayer from "react-player";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
+import "./SessionWorkspace.css";
 import axios from "axios";
-import { FiSave, FiMessageSquare, FiArrowLeft, FiX, FiSend, FiVideo, FiEdit3, FiDownload, FiEdit2, FiCheck } from "react-icons/fi";
+import { FiSave, FiMessageSquare, FiArrowLeft, FiX, FiSend, FiVideo, FiEdit3, FiDownload } from "react-icons/fi";
 
 const SessionWorkspace = () => {
   const { id } = useParams();
@@ -23,8 +24,6 @@ const SessionWorkspace = () => {
   const [playing, setPlaying] = useState(true);
   const [chatOpen, setChatOpen] = useState(false);
   const [notesOpen, setNotesOpen] = useState(true);
-  const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [editedTitle, setEditedTitle] = useState("");
 
   const modules = {
     toolbar: [
@@ -97,8 +96,8 @@ const SessionWorkspace = () => {
       color: #333;
     }
     h1 {
-      color: #4F46E5;
-      border-bottom: 3px solid #4F46E5;
+      color: #FF6B6B;
+      border-bottom: 3px solid #FF6B6B;
       padding-bottom: 10px;
     }
     .metadata {
@@ -140,29 +139,7 @@ const SessionWorkspace = () => {
     setTimeout(() => setNotification(""), 2000);
   };
 
-  const handleUpdateTitle = async () => {
-    if (!editedTitle.trim()) {
-      setIsEditingTitle(false);
-      return;
-    }
 
-    try {
-      const token = localStorage.getItem("token");
-      await axios.put(
-        `http://localhost:5001/api/sessions/${id}`,
-        { title: editedTitle.trim(), content },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      setSession({ ...session, title: editedTitle.trim() });
-      setIsEditingTitle(false);
-      setNotification("Title updated!");
-      setTimeout(() => setNotification(""), 2000);
-    } catch (error) {
-      setNotification("Failed to update title");
-      setTimeout(() => setNotification(""), 2000);
-    }
-  };
 
   const handleChatSubmit = async (e) => {
     e.preventDefault();
@@ -210,7 +187,7 @@ const SessionWorkspace = () => {
             width: '48px',
             height: '48px',
             border: '4px solid #E5E7EB',
-            borderTopColor: '#4F46E5',
+            borderTopColor: '#FF6B6B',
             borderRadius: '50%',
             animation: 'spin 1s linear infinite'
           }}></div>
@@ -264,95 +241,18 @@ const SessionWorkspace = () => {
           </button>
           <div style={{
             padding: '8px 16px',
-            background: '#F3F4F6',
+            background: '#F9FAFB',
             borderRadius: '8px',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
-            maxWidth: '400px'
+            gap: '10px',
+            maxWidth: '500px',
+            border: '1px solid #E5E7EB'
           }}>
-            <FiVideo size={16} style={{ color: '#4F46E5', flexShrink: 0 }} />
-            {isEditingTitle ? (
-              <>
-                <input
-                  type="text"
-                  value={editedTitle}
-                  onChange={(e) => setEditedTitle(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      handleUpdateTitle();
-                    }
-                  }}
-                  autoFocus
-                  style={{
-                    flex: 1,
-                    padding: '4px 8px',
-                    background: 'white',
-                    border: '1px solid #4F46E5',
-                    borderRadius: '4px',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#111827',
-                    outline: 'none',
-                    minWidth: '200px'
-                  }}
-                />
-                <button
-                  onClick={handleUpdateTitle}
-                  style={{
-                    padding: '4px',
-                    background: '#10B981',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <FiCheck size={14} style={{ color: 'white' }} />
-                </button>
-                <button
-                  onClick={() => setIsEditingTitle(false)}
-                  style={{
-                    padding: '4px',
-                    background: '#EF4444',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <FiX size={14} style={{ color: 'white' }} />
-                </button>
-              </>
-            ) : (
-              <>
-                <span style={{ fontSize: '14px', fontWeight: '600', color: '#111827', flex: 1 }}>
-                  {session.title}
-                </span>
-                <button
-                  onClick={() => {
-                    setEditedTitle(session.title);
-                    setIsEditingTitle(true);
-                  }}
-                  style={{
-                    padding: '4px',
-                    background: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    color: '#6B7280'
-                  }}
-                  title="Edit session name"
-                >
-                  <FiEdit2 size={14} />
-                </button>
-              </>
-            )}
+            <FiVideo size={18} style={{ color: '#FF6B6B', flexShrink: 0 }} />
+            <span style={{ fontSize: '15px', fontWeight: '600', color: '#111827', letterSpacing: '-0.2px' }}>
+              {session.title}
+            </span>
           </div>
         </div>
 
@@ -361,8 +261,8 @@ const SessionWorkspace = () => {
             onClick={() => setNotesOpen(!notesOpen)}
             style={{
               padding: '10px 16px',
-              background: notesOpen ? '#4F46E5' : 'white',
-              border: notesOpen ? '1px solid #4F46E5' : '1px solid #E5E7EB',
+              background: notesOpen ? '#FF6B6B' : 'white',
+              border: notesOpen ? '1px solid #FF6B6B' : '1px solid #E5E7EB',
               borderRadius: '8px',
               color: notesOpen ? 'white' : '#6B7280',
               fontSize: '14px',
@@ -400,7 +300,7 @@ const SessionWorkspace = () => {
             disabled={saving}
             style={{
               padding: '10px 20px',
-              background: '#4F46E5',
+              background: '#FF6B6B',
               border: 'none',
               borderRadius: '8px',
               color: 'white',
@@ -527,7 +427,7 @@ const SessionWorkspace = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            background: '#4F46E5'
+            background: '#FF6B6B'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div style={{
@@ -590,7 +490,7 @@ const SessionWorkspace = () => {
                 <div style={{
                   padding: '12px 16px',
                   borderRadius: '12px',
-                  background: msg.role === 'user' ? '#4F46E5' : 'white',
+                  background: msg.role === 'user' ? '#FF6B6B' : 'white',
                   color: msg.role === 'user' ? 'white' : '#111827',
                   fontSize: '14px',
                   lineHeight: '1.5',
@@ -627,7 +527,7 @@ const SessionWorkspace = () => {
             />
             <button type="submit" style={{
               padding: '10px 16px',
-              background: '#4F46E5',
+              background: '#FF6B6B',
               border: 'none',
               borderRadius: '8px',
               color: 'white',
@@ -653,10 +553,10 @@ const SessionWorkspace = () => {
             left: 'auto',
             width: '56px',
             height: '56px',
-            background: '#4F46E5',
+            background: '#FF6B6B',
             border: 'none',
             borderRadius: '16px',
-            boxShadow: '0 8px 24px rgba(79, 70, 229, 0.4)',
+            boxShadow: '0 8px 24px rgba(255, 107, 107, 0.4)',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -666,11 +566,11 @@ const SessionWorkspace = () => {
           }}
           onMouseEnter={(e) => {
             e.target.style.transform = 'scale(1.05)';
-            e.target.style.boxShadow = '0 12px 32px rgba(79, 70, 229, 0.5)';
+            e.target.style.boxShadow = '0 12px 32px rgba(255, 107, 107, 0.5)';
           }}
           onMouseLeave={(e) => {
             e.target.style.transform = 'scale(1)';
-            e.target.style.boxShadow = '0 8px 24px rgba(79, 70, 229, 0.4)';
+            e.target.style.boxShadow = '0 8px 24px rgba(255, 107, 107, 0.4)';
           }}
         >
           <FiMessageSquare size={24} style={{ color: 'white' }} />
