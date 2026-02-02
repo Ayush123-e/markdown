@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { FiVideo, FiBook, FiZap, FiCheck, FiArrowRight, FiPlay, FiDownload, FiClock } from "react-icons/fi";
+import { FiVideo, FiBook, FiZap, FiCheck, FiArrowRight, FiPlay } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import "./LandingPage.css";
 
@@ -28,9 +28,7 @@ const LandingPage = () => {
       title: "AI-Powered Assistant",
       description: "Get instant answers and explanations from our intelligent tutor powered by Google Gemini, available 24/7 during your study sessions."
     }
-  ];
-
-  const steps = [
+  ]; const steps = [
     {
       number: "1",
       title: "Paste YouTube Link",
@@ -48,6 +46,9 @@ const LandingPage = () => {
     }
   ];
 
+
+
+
   const highlights = [
     "Video-synchronized note-taking",
     "AI tutor integration",
@@ -59,11 +60,6 @@ const LandingPage = () => {
     <div className="landing-page">
       {/* Hero Section */}
       <div className="landing-hero">
-        {/* Decorative Elements */}
-        <div className="landing-decoration landing-decoration-1" />
-        <div className="landing-decoration landing-decoration-2" />
-        <div className="landing-decoration landing-decoration-3" />
-
         {/* Navigation */}
         <nav className="landing-nav">
           <div className="landing-nav-brand">
@@ -98,10 +94,6 @@ const LandingPage = () => {
 
         {/* Hero Content */}
         <div className="landing-hero-content">
-          <div className="landing-hero-badge">
-            ⚡ Powered by AI Technology
-          </div>
-
           <h1 className="landing-hero-title">
             Master Any Subject with
             <br />
@@ -155,7 +147,7 @@ const LandingPage = () => {
           {features.map((feature, idx) => (
             <div key={idx} className="landing-feature-card">
               <div className="landing-feature-icon">
-                <feature.icon size={32} style={{ color: '#DC2626' }} />
+                <feature.icon size={32} style={{ color: '#FF6B6B' }} />
               </div>
               <h3 className="landing-feature-title">{feature.title}</h3>
               <p className="landing-feature-description">{feature.description}</p>
@@ -168,6 +160,9 @@ const LandingPage = () => {
       <div className="landing-how-it-works">
         <div className="landing-how-it-works-content">
           <h2 className="landing-how-it-works-title">How It Works</h2>
+          <p className="landing-how-it-works-subtitle">
+            Get started in three simple steps
+          </p>
 
           <div className="landing-steps">
             {steps.map((step, idx) => (
@@ -181,22 +176,6 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* CTA Section */}
-      <div className="landing-cta">
-        <div className="landing-cta-content">
-          <h2 className="landing-cta-title">Ready to Transform Your Learning?</h2>
-          <p className="landing-cta-subtitle">
-            Join thousands of students who are already learning smarter with AI-powered study sessions
-          </p>
-          <Link
-            to={isLoggedIn ? "/dashboard" : "/register"}
-            className="landing-cta-btn"
-          >
-            {isLoggedIn ? "Go to Dashboard" : "Get Started Now"}
-            <FiArrowRight size={24} />
-          </Link>
-        </div>
-      </div>
 
       {/* Footer */}
       <div className="landing-footer">

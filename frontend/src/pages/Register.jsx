@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { FiUser, FiMail, FiLock, FiUserPlus, FiVideo, FiStar, FiTrendingUp } from "react-icons/fi";
+import { FiUser, FiMail, FiLock, FiUserPlus, FiVideo, FiArrowLeft } from "react-icons/fi";
 import "./Register.css";
 
 const Register = () => {
@@ -29,25 +29,36 @@ const Register = () => {
     }
   };
 
-  const benefits = [
-    { icon: FiVideo, title: 'Video-Based Learning', text: 'Learn from any YouTube video' },
-    { icon: FiStar, title: 'AI-Powered Assistance', text: 'Get instant help from AI tutors' },
-    { icon: FiTrendingUp, title: 'Track Your Progress', text: 'Save notes and build knowledge' }
-  ];
-
   return (
     <div className="register-container">
-      <div className="register-bg-blob-1" />
-      <div className="register-bg-blob-2" />
+      {/* Header */}
+      <div className="register-header">
+        <Link to="/" className="register-back-btn">
+          <FiArrowLeft size={20} />
+          <span>Back to Home</span>
+        </Link>
+      </div>
 
-      {/* Left Side - Registration Form */}
-      <div className="register-left-panel">
+      {/* Main Content */}
+      <div className="register-content">
         <div className="register-form-card">
+          {/* Logo */}
+          <div className="register-logo">
+            <div className="register-logo-icon">
+              <FiVideo size={28} style={{ color: 'white' }} />
+            </div>
+            <h1 className="register-logo-title">
+              Study<span>Space</span>
+            </h1>
+          </div>
+
+          {/* Form Header */}
           <div className="register-form-header">
-            <h2 className="register-form-title">Create Account ✨</h2>
+            <h2 className="register-form-title">Create Account</h2>
             <p className="register-form-subtitle">Join thousands of learners today</p>
           </div>
 
+          {/* Error Message */}
           {error && (
             <div className="register-error-box">
               <span className="register-error-icon">⚠️</span>
@@ -55,6 +66,7 @@ const Register = () => {
             </div>
           )}
 
+          {/* Form */}
           <form onSubmit={handleSubmit}>
             <div className="register-form-group">
               <label className="register-label">Full Name</label>
@@ -109,6 +121,7 @@ const Register = () => {
             </button>
           </form>
 
+          {/* Footer */}
           <div className="register-footer">
             <p className="register-footer-text">
               Already have an account?{' '}
@@ -116,35 +129,6 @@ const Register = () => {
                 Sign in
               </Link>
             </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Right Side - Benefits Panel */}
-      <div className="register-right-panel">
-        <div className="register-right-content">
-          <div className="register-logo-box">
-            <FiVideo size={40} style={{ color: 'white' }} />
-          </div>
-
-          <h1 className="register-title">Start Learning Smarter</h1>
-
-          <p className="register-description">
-            Join our community and experience the future of online learning with AI-powered tools.
-          </p>
-
-          <div className="register-benefits">
-            {benefits.map((benefit, idx) => (
-              <div key={idx} className="register-benefit-card">
-                <div className="register-benefit-icon">
-                  <benefit.icon size={20} />
-                </div>
-                <div className="register-benefit-content">
-                  <h3>{benefit.title}</h3>
-                  <p>{benefit.text}</p>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </div>

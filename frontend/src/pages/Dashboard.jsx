@@ -119,7 +119,7 @@ const Dashboard = () => {
       <main className="dashboard-main">
         {/* Welcome Section */}
         <div className="dashboard-welcome">
-          <h1 className="dashboard-welcome-title">Welcome Back! 👋</h1>
+          <h1 className="dashboard-welcome-title">Welcome Back</h1>
           <p className="dashboard-welcome-subtitle">
             Start a new study session or continue where you left off
           </p>

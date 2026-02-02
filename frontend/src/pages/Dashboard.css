@@ -1,8 +1,8 @@
-/* Dashboard Page Styles */
+/* Dashboard Page Styles - Clean & Minimal */
 
 .dashboard-container {
   min-height: 100vh;
-  background: #F9FAFB;
+  background: #FAFAFA;
   display: flex;
   flex-direction: column;
 }
@@ -11,11 +11,10 @@
 .dashboard-navbar {
   background: white;
   border-bottom: 1px solid #E5E7EB;
-  padding: 16px 40px;
+  padding: 20px 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -24,17 +23,18 @@
 .dashboard-navbar-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 
 .dashboard-navbar-logo {
-  width: 40px;
-  height: 40px;
-  background: #DC2626;
+  width: 42px;
+  height: 42px;
+  background: #FF6B6B;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.15);
 }
 
 .dashboard-navbar-title {
@@ -42,12 +42,13 @@
   font-weight: 700;
   color: #111827;
   margin: 0;
+  letter-spacing: -0.3px;
 }
 
 .dashboard-navbar-right {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
 }
 
 .dashboard-session-count {
@@ -55,12 +56,13 @@
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  background: #F3F4F6;
+  background: #FFF5F5;
   border-radius: 8px;
+  border: 1px solid #FFE4E4;
 }
 
 .dashboard-session-count-text {
-  font-size: 14px;
+  font-size: 13px;
   color: #6B7280;
   font-weight: 500;
 }
@@ -68,12 +70,12 @@
 .dashboard-session-count-number {
   font-size: 14px;
   font-weight: 700;
-  color: #DC2626;
+  color: #FF6B6B;
 }
 
 .dashboard-logout-btn {
-  padding: 10px 20px;
-  background: #EF4444;
+  padding: 9px 18px;
+  background: #FF6B6B;
   color: white;
   border: none;
   border-radius: 8px;
@@ -82,12 +84,12 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
-  transition: all 0.2s;
+  gap: 7px;
+  transition: all 0.2s ease;
 }
 
 .dashboard-logout-btn:hover {
-  background: #DC2626;
+  background: #FF5252;
   transform: translateY(-1px);
 }
 
@@ -95,14 +97,14 @@
 .dashboard-main {
   flex: 1;
   padding: 40px;
-  max-width: 1400px;
+  max-width: 1300px;
   margin: 0 auto;
   width: 100%;
 }
 
 /* Welcome Section */
 .dashboard-welcome {
-  margin-bottom: 40px;
+  margin-bottom: 36px;
 }
 
 .dashboard-welcome-title {
@@ -110,27 +112,29 @@
   font-weight: 800;
   color: #111827;
   margin-bottom: 8px;
+  letter-spacing: -1px;
 }
 
 .dashboard-welcome-subtitle {
   font-size: 16px;
   color: #6B7280;
   margin: 0;
+  font-weight: 400;
 }
 
 /* New Session Card */
 .dashboard-new-session-card {
   background: white;
-  border: 2px dashed #E5E7EB;
+  border: 1.5px dashed #E5E7EB;
   border-radius: 16px;
   padding: 32px;
   margin-bottom: 40px;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
 }
 
 .dashboard-new-session-card:hover {
-  border-color: #DC2626;
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
+  border-color: #FF6B6B;
+  box-shadow: 0 4px 16px rgba(255, 107, 107, 0.08);
 }
 
 .dashboard-new-session-header {
@@ -142,9 +146,10 @@
 
 .dashboard-new-session-title {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   color: #111827;
   margin: 0;
+  letter-spacing: -0.3px;
 }
 
 /* Form Styles */
@@ -154,20 +159,25 @@
 
 .dashboard-title-input {
   width: 100%;
-  padding: 14px 16px;
+  padding: 13px 16px;
   background: #F9FAFB;
-  border: 1px solid #E5E7EB;
-  border-radius: 8px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 10px;
   font-size: 15px;
   color: #111827;
   outline: none;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   font-family: inherit;
+}
+
+.dashboard-title-input::placeholder {
+  color: #9CA3AF;
 }
 
 .dashboard-title-input:focus {
   background: white;
-  border-color: #DC2626;
+  border-color: #FF6B6B;
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
 }
 
 .dashboard-url-row {
@@ -183,49 +193,52 @@
 
 .dashboard-url-input {
   width: 100%;
-  padding: 14px 16px;
+  padding: 13px 16px;
   background: #F9FAFB;
-  border: 1px solid #E5E7EB;
-  border-radius: 8px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 10px;
   font-size: 15px;
   color: #111827;
   outline: none;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   font-family: inherit;
+}
+
+.dashboard-url-input::placeholder {
+  color: #9CA3AF;
 }
 
 .dashboard-url-input:focus {
   background: white;
-  border-color: #DC2626;
+  border-color: #FF6B6B;
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
 }
 
 .dashboard-submit-btn {
-  padding: 14px 28px;
-  background: #DC2626;
+  padding: 13px 26px;
+  background: #FF6B6B;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
 }
 
 .dashboard-submit-btn:disabled {
   background: #E5E7EB;
   cursor: not-allowed;
-  box-shadow: none;
+  color: #9CA3AF;
 }
 
 .dashboard-submit-btn:not(:disabled):hover {
-  background: #B91C1C;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
+  background: #FF5252;
+  transform: translateY(-1px);
 }
 
 /* Sessions Section */
@@ -245,12 +258,13 @@
   font-weight: 700;
   color: #111827;
   margin: 0;
+  letter-spacing: -0.5px;
 }
 
 /* Sessions Grid */
 .dashboard-sessions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 24px;
 }
 
@@ -265,15 +279,16 @@
   background: white;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
   border: 1px solid #E5E7EB;
   position: relative;
 }
 
 .dashboard-session-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  border-color: #FFD4D4;
 }
 
 .dashboard-session-card:hover .dashboard-session-delete-btn {
@@ -303,12 +318,12 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 0.3s ease;
 }
 
 .dashboard-session-card:hover .dashboard-session-play-overlay {
@@ -316,14 +331,19 @@
 }
 
 .dashboard-session-play-icon {
-  width: 60px;
-  height: 60px;
+  width: 56px;
+  height: 56px;
   background: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #4F46E5;
+  color: #FF6B6B;
+  transition: all 0.3s ease;
+}
+
+.dashboard-session-card:hover .dashboard-session-play-icon {
+  transform: scale(1.1);
 }
 
 .dashboard-session-delete-btn {
@@ -332,7 +352,7 @@
   right: 12px;
   width: 36px;
   height: 36px;
-  background: rgba(239, 68, 68, 0.95);
+  background: rgba(255, 107, 107, 0.95);
   backdrop-filter: blur(4px);
   border: none;
   border-radius: 8px;
@@ -342,12 +362,12 @@
   justify-content: center;
   color: white;
   opacity: 0;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
   z-index: 10;
 }
 
 .dashboard-session-delete-btn:hover {
-  background: #DC2626;
+  background: #FF5252;
   transform: scale(1.1);
 }
 
@@ -365,6 +385,7 @@
   -webkit-box-orient: vertical;
   line-clamp: 2;
   overflow: hidden;
+  letter-spacing: -0.2px;
 }
 
 .dashboard-session-date {
@@ -373,6 +394,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  margin: 0;
 }
 
 /* Empty State */
@@ -380,31 +402,75 @@
   text-align: center;
   padding: 60px 20px;
   background: white;
-  border-radius: 12px;
+  border-radius: 16px;
   border: 1px solid #E5E7EB;
 }
 
 .dashboard-empty-icon {
   width: 80px;
   height: 80px;
-  background: #F3F4F6;
+  background: #FFF5F5;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 20px;
-  color: #9CA3AF;
+  color: #FF6B6B;
 }
 
 .dashboard-empty-title {
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 700;
   color: #111827;
   margin-bottom: 8px;
+  letter-spacing: -0.3px;
 }
 
 .dashboard-empty-subtitle {
-  font-size: 14px;
+  font-size: 15px;
   color: #6B7280;
   margin: 0;
+  font-weight: 400;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .dashboard-sessions-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-navbar {
+    padding: 16px 24px;
+  }
+
+  .dashboard-main {
+    padding: 24px;
+  }
+
+  .dashboard-welcome-title {
+    font-size: 28px;
+  }
+
+  .dashboard-new-session-card {
+    padding: 24px;
+  }
+
+  .dashboard-url-row {
+    flex-direction: column;
+  }
+
+  .dashboard-submit-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .dashboard-sessions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-session-count {
+    display: none;
+  }
 }

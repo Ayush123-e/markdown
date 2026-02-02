@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { FiMail, FiLock, FiLogIn, FiVideo, FiBook, FiZap } from "react-icons/fi";
+import { FiMail, FiLock, FiLogIn, FiVideo, FiArrowLeft } from "react-icons/fi";
 import "./Login.css";
 
 const Login = () => {
@@ -27,51 +27,36 @@ const Login = () => {
     }
   };
 
-  const features = [
-    { icon: FiVideo, text: 'Watch & Learn from YouTube videos' },
-    { icon: FiBook, text: 'Smart note-taking with rich editor' },
-    { icon: FiZap, text: 'AI tutor powered by Gemini' }
-  ];
-
   return (
     <div className="login-container">
-      <div className="login-bg-blob-1" />
-      <div className="login-bg-blob-2" />
-
-      {/* Left Side - Info Panel */}
-      <div className="login-left-panel">
-        <div className="login-left-content">
-          <div className="login-logo-box">
-            <FiVideo size={40} style={{ color: 'white' }} />
-          </div>
-
-          <h1 className="login-title">StudySpace</h1>
-
-          <p className="login-description">
-            Transform your learning with AI-powered study sessions. Take notes, chat with AI tutors, and master any topic.
-          </p>
-
-          <div className="login-features">
-            {features.map((feature, idx) => (
-              <div key={idx} className="login-feature-card">
-                <div className="login-feature-icon">
-                  <feature.icon size={20} />
-                </div>
-                <span className="login-feature-text">{feature.text}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+      {/* Header */}
+      <div className="login-header">
+        <Link to="/" className="login-back-btn">
+          <FiArrowLeft size={20} />
+          <span>Back to Home</span>
+        </Link>
       </div>
 
-      {/* Right Side - Login Form */}
-      <div className="login-right-panel">
+      {/* Main Content */}
+      <div className="login-content">
         <div className="login-form-card">
+          {/* Logo */}
+          <div className="login-logo">
+            <div className="login-logo-icon">
+              <FiVideo size={28} style={{ color: 'white' }} />
+            </div>
+            <h1 className="login-logo-title">
+              Study<span>Space</span>
+            </h1>
+          </div>
+
+          {/* Form Header */}
           <div className="login-form-header">
-            <h2 className="login-form-title">Welcome Back! 👋</h2>
+            <h2 className="login-form-title">Welcome Back</h2>
             <p className="login-form-subtitle">Sign in to continue your learning journey</p>
           </div>
 
+          {/* Error Message */}
           {error && (
             <div className="login-error-box">
               <span className="login-error-icon">⚠️</span>
@@ -79,6 +64,7 @@ const Login = () => {
             </div>
           )}
 
+          {/* Form */}
           <form onSubmit={handleSubmit}>
             <div className="login-form-group">
               <label className="login-label">Email Address</label>
@@ -116,6 +102,7 @@ const Login = () => {
             </button>
           </form>
 
+          {/* Footer */}
           <div className="login-footer">
             <p className="login-footer-text">
               Don't have an account?{' '}
