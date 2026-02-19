@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api";
 import { Link, useNavigate } from "react-router-dom";
 import { FiPlay, FiLogOut, FiVideo, FiPlus, FiTrash2 } from "react-icons/fi";
 import "./Dashboard.css";
@@ -16,10 +16,7 @@ const Dashboard = () => {
 
   const fetchSessions = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const { data } = await axios.get("http://localhost:5001/api/sessions", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const { data } = await api.get("/sessions");
       setSessions(data);
     } catch (error) {
       console.error("Failed to fetch sessions");
@@ -43,20 +40,15 @@ const Dashboard = () => {
     }
 
     try {
-      const token = localStorage.getItem("token");
       const title = newTitle.trim() || "New Study Session";
       const thumbnail = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
 
-      const { data } = await axios.post(
-        "http://localhost:5001/api/sessions",
-        {
-          title,
-          videoUrl: newUrl,
-          thumbnail,
-          content: "",
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const { data } = await api.post("/sessions", {
+        title,
+        videoUrl: newUrl,
+        thumbnail,
+        content: "",
+      });
 
       setNewUrl("");
       setNewTitle("");
@@ -81,10 +73,7 @@ const Dashboard = () => {
     }
 
     try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5001/api/sessions/${sessionId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.delete(`/sessions/${sessionId}`);
       fetchSessions();
     } catch (error) {
       console.error("Failed to delete session", error);

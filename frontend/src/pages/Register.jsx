@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../api";
 import { Link, useNavigate } from "react-router-dom";
 import { FiUser, FiMail, FiLock, FiUserPlus, FiVideo, FiArrowLeft } from "react-icons/fi";
 import "./Register.css";
@@ -16,7 +16,7 @@ const Register = () => {
     setError("");
 
     try {
-      const { data } = await axios.post("http://localhost:5001/api/auth/register", {
+      const { data } = await api.post("/auth/register", {
         name,
         email,
         password,

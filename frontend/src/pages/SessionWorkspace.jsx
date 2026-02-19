@@ -4,7 +4,7 @@ import ReactPlayer from "react-player";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import "./SessionWorkspace.css";
-import axios from "axios";
+import api from "../api";
 import { FiSave, FiMessageSquare, FiArrowLeft, FiX, FiSend, FiVideo, FiEdit3, FiDownload } from "react-icons/fi";
 
 const SessionWorkspace = () => {
@@ -37,10 +37,7 @@ const SessionWorkspace = () => {
 
   const fetchSession = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const { data } = await axios.get(`http://localhost:5001/api/sessions/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const { data } = await api.get(`/sessions/${id}`);
       setSession(data);
       setContent(data.content || "");
     } catch (error) {
@@ -55,12 +52,7 @@ const SessionWorkspace = () => {
   const saveSession = async () => {
     setSaving(true);
     try {
-      const token = localStorage.getItem("token");
-      await axios.put(
-        `http://localhost:5001/api/sessions/${id}`,
-        { title: session.title, content },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.put(`/sessions/${id}`, { title: session.title, content });
       setNotification("Session saved successfully!");
       setTimeout(() => setNotification(""), 2000);
     } catch (error) {
@@ -151,15 +143,10 @@ const SessionWorkspace = () => {
     setInput("");
 
     try {
-      const token = localStorage.getItem("token");
-      const { data } = await axios.post(
-        "http://localhost:5001/api/ai/chat",
-        {
-          message: input,
-          history: messages
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const { data } = await api.post("/ai/chat", {
+        message: input,
+        history: messages
+      });
 
       setMessages([...currentMessages, { role: "ai", text: data.text }]);
     } catch (error) {
@@ -203,94 +190,35 @@ const SessionWorkspace = () => {
   }
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100vh',
-      background: '#FAFAFA',
-      overflow: 'hidden'
-    }}>
+    <div className="session-workspace">
       {/* Header */}
-      <header style={{
-        background: 'white',
-        borderBottom: '1px solid #E5E7EB',
-        padding: '16px 24px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        zIndex: 10
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+      <header className="session-header">
+        <div className="session-header-left">
           <button
             onClick={() => navigate("/dashboard")}
-            style={{
-              padding: '10px 16px',
-              background: 'white',
-              border: '1px solid #E5E7EB',
-              borderRadius: '8px',
-              color: '#6B7280',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}
+            className="session-back-btn"
           >
             <FiArrowLeft size={16} /> Back
           </button>
-          <div style={{
-            padding: '8px 16px',
-            background: '#F9FAFB',
-            borderRadius: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            maxWidth: '500px',
-            border: '1px solid #E5E7EB'
-          }}>
+          <div className="session-title-container">
             <FiVideo size={18} style={{ color: '#FF6B6B', flexShrink: 0 }} />
-            <span style={{ fontSize: '15px', fontWeight: '600', color: '#111827', letterSpacing: '-0.2px' }}>
+            <span className="session-title-text">
               {session.title}
             </span>
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div className="session-header-right">
           <button
             onClick={() => setNotesOpen(!notesOpen)}
-            style={{
-              padding: '10px 16px',
-              background: notesOpen ? '#FF6B6B' : 'white',
-              border: notesOpen ? '1px solid #FF6B6B' : '1px solid #E5E7EB',
-              borderRadius: '8px',
-              color: notesOpen ? 'white' : '#6B7280',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}
+            className={`session-notes-toggle-btn ${notesOpen ? 'active' : 'inactive'}`}
           >
             <FiEdit3 size={16} /> Notes
           </button>
 
           <button
             onClick={downloadNotes}
-            style={{
-              padding: '10px 16px',
-              background: 'white',
-              border: '1px solid #E5E7EB',
-              borderRadius: '8px',
-              color: '#6B7280',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}
+            className="session-download-btn"
           >
             <FiDownload size={16} /> Download
           </button>
@@ -298,20 +226,7 @@ const SessionWorkspace = () => {
           <button
             onClick={saveSession}
             disabled={saving}
-            style={{
-              padding: '10px 20px',
-              background: '#FF6B6B',
-              border: 'none',
-              borderRadius: '8px',
-              color: 'white',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: saving ? 'not-allowed' : 'pointer',
-              opacity: saving ? 0.6 : 1,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}
+            className="session-save-btn"
           >
             <FiSave size={16} /> {saving ? 'Saving...' : 'Save'}
           </button>
@@ -319,30 +234,11 @@ const SessionWorkspace = () => {
       </header>
 
       {/* Main Content */}
-      <div style={{
-        flex: 1,
-        display: 'flex',
-        overflow: 'hidden',
-        padding: '20px',
-        gap: '20px'
-      }}>
+      <div className="session-main-content">
         {/* Video Section - Large */}
-        <div style={{
-          flex: notesOpen ? '0 0 65%' : '1',
-          display: 'flex',
-          flexDirection: 'column',
-          transition: 'all 0.3s ease'
-        }}>
-          <div style={{
-            background: 'white',
-            border: '1px solid #E5E7EB',
-            borderRadius: '12px',
-            overflow: 'hidden',
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column'
-          }}>
-            <div style={{ flex: 1, background: '#000', position: 'relative' }}>
+        <div className={`session-video-section ${notesOpen ? 'notes-open' : ''}`}>
+          <div className="session-video-container">
+            <div className="session-video-player">
               <ReactPlayer
                 ref={playerRef}
                 url={session.videoUrl}
@@ -362,31 +258,14 @@ const SessionWorkspace = () => {
 
         {/* Notes Section */}
         {notesOpen && (
-          <div style={{
-            flex: '0 0 35%',
-            display: 'flex',
-            flexDirection: 'column',
-            transition: 'all 0.3s ease'
-          }}>
-            <div style={{
-              background: 'white',
-              border: '1px solid #E5E7EB',
-              borderRadius: '12px',
-              overflow: 'hidden',
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
-              <div style={{
-                padding: '16px 20px',
-                borderBottom: '1px solid #E5E7EB',
-                background: '#FAFAFA'
-              }}>
-                <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#111827', margin: 0 }}>
+          <div className="session-notes-section">
+            <div className="session-notes-container">
+              <div className="session-notes-header">
+                <h3 className="session-notes-title">
                   Study Notes
                 </h3>
               </div>
-              <div style={{ flex: 1, overflow: 'hidden', padding: '16px' }}>
+              <div className="session-notes-editor">
                 <ReactQuill
                   ref={quillRef}
                   theme="snow"
@@ -404,98 +283,34 @@ const SessionWorkspace = () => {
 
       {/* AI Chat - Bottom Right Floating */}
       {chatOpen && (
-        <div style={{
-          position: 'fixed',
-          bottom: '24px',
-          right: '24px',
-          left: 'auto',
-          width: '380px',
-          height: '500px',
-          background: 'white',
-          border: '1px solid #E5E7EB',
-          borderRadius: '16px',
-          boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
-          display: 'flex',
-          flexDirection: 'column',
-          zIndex: 100,
-          overflow: 'hidden'
-        }}>
+        <div className="session-chat-window">
           {/* Chat Header */}
-          <div style={{
-            padding: '16px 20px',
-            borderBottom: '1px solid #E5E7EB',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            background: '#FF6B6B'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{
-                width: '36px',
-                height: '36px',
-                background: 'white',
-                borderRadius: '10px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
+          <div className="session-chat-header">
+            <div className="session-chat-header-left">
+              <div className="session-chat-avatar">
                 <span style={{ fontSize: '20px' }}>🤖</span>
               </div>
-              <div>
-                <h4 style={{ fontSize: '14px', fontWeight: '600', color: 'white', margin: 0 }}>
-                  AI Tutor
-                </h4>
-                <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)', margin: 0 }}>
-                  Powered by Gemini
-                </p>
+              <div className="session-chat-title-container">
+                <h4>AI Tutor</h4>
+                <p>Powered by Gemini</p>
               </div>
             </div>
             <button
               onClick={() => setChatOpen(false)}
-              style={{
-                background: 'rgba(255,255,255,0.2)',
-                border: 'none',
-                borderRadius: '6px',
-                width: '28px',
-                height: '28px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                color: 'white'
-              }}
+              className="session-chat-close-btn"
             >
               <FiX size={16} />
             </button>
           </div>
 
           {/* Messages */}
-          <div style={{
-            flex: 1,
-            overflowY: 'auto',
-            padding: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '16px',
-            background: '#FAFAFA'
-          }}>
+          <div className="session-chat-messages">
             {messages.map((msg, idx) => (
               <div
                 key={idx}
-                style={{
-                  alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
-                  maxWidth: '80%'
-                }}
+                className={`session-chat-message ${msg.role}`}
               >
-                <div style={{
-                  padding: '12px 16px',
-                  borderRadius: '12px',
-                  background: msg.role === 'user' ? '#FF6B6B' : 'white',
-                  color: msg.role === 'user' ? 'white' : '#111827',
-                  fontSize: '14px',
-                  lineHeight: '1.5',
-                  border: msg.role === 'user' ? 'none' : '1px solid #E5E7EB'
-                }}>
+                <div className="session-chat-message-content">
                   {msg.text}
                 </div>
               </div>
@@ -503,42 +318,19 @@ const SessionWorkspace = () => {
           </div>
 
           {/* Input */}
-          <form onSubmit={handleChatSubmit} style={{
-            padding: '16px',
-            borderTop: '1px solid #E5E7EB',
-            display: 'flex',
-            gap: '8px',
-            background: 'white'
-          }}>
-            <input
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              placeholder="Ask me anything..."
-              style={{
-                flex: 1,
-                padding: '10px 14px',
-                background: '#F9FAFB',
-                border: '1px solid #E5E7EB',
-                borderRadius: '8px',
-                fontSize: '14px',
-                outline: 'none',
-                color: '#111827'
-              }}
-            />
-            <button type="submit" style={{
-              padding: '10px 16px',
-              background: '#FF6B6B',
-              border: 'none',
-              borderRadius: '8px',
-              color: 'white',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <FiSend size={16} />
-            </button>
-          </form>
+          <div className="session-chat-input-container">
+            <form onSubmit={handleChatSubmit} className="session-chat-input-form">
+              <input
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                placeholder="Ask me anything..."
+                className="session-chat-input"
+              />
+              <button type="submit" className="session-chat-send-btn">
+                <FiSend size={16} />
+              </button>
+            </form>
+          </div>
         </div>
       )}
 
@@ -546,32 +338,7 @@ const SessionWorkspace = () => {
       {!chatOpen && (
         <button
           onClick={() => setChatOpen(true)}
-          style={{
-            position: 'fixed',
-            bottom: '24px',
-            right: '24px',
-            left: 'auto',
-            width: '56px',
-            height: '56px',
-            background: '#FF6B6B',
-            border: 'none',
-            borderRadius: '16px',
-            boxShadow: '0 8px 24px rgba(255, 107, 107, 0.4)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 100,
-            transition: 'all 0.2s'
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.transform = 'scale(1.05)';
-            e.target.style.boxShadow = '0 12px 32px rgba(255, 107, 107, 0.5)';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.transform = 'scale(1)';
-            e.target.style.boxShadow = '0 8px 24px rgba(255, 107, 107, 0.4)';
-          }}
+          className="session-chat-toggle-btn"
         >
           <FiMessageSquare size={24} style={{ color: 'white' }} />
         </button>
@@ -579,23 +346,8 @@ const SessionWorkspace = () => {
 
       {/* Notification Toast */}
       {notification && (
-        <div style={{
-          position: 'fixed',
-          bottom: '24px',
-          right: '24px',
-          padding: '14px 24px',
-          background: '#111827',
-          color: 'white',
-          borderRadius: '10px',
-          fontSize: '14px',
-          fontWeight: '500',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-          zIndex: 1000,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px'
-        }}>
-          <FiClock size={16} /> {notification}
+        <div className="session-notification">
+          {notification}
         </div>
       )}
     </div>
