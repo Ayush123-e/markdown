@@ -67,7 +67,14 @@
   font-weight: 700;
   font-size: 1.2rem;
   letter-spacing: -0.02em;
+  color: white;
+  /* White on dark hero image */
+  transition: color 0.3s;
+}
+
+.lp-nav--pinned .lp-logo-name {
   color: #0D0D0D;
+  /* Dark on white pinned header */
 }
 
 .lp-nav-links {
@@ -78,7 +85,8 @@
 .lp-navlink {
   font-size: 0.9rem;
   font-weight: 500;
-  color: #666677;
+  color: rgba(255, 255, 255, 0.85);
+  /* Light on dark hero */
   transition: color 0.2s;
   position: relative;
 }
@@ -90,16 +98,31 @@
   left: 0;
   width: 0;
   height: 2px;
-  background: #059669;
-  transition: width 0.25s ease;
+  background: white;
+  /* Underline light */
+  transition: width 0.25s ease, background 0.3s ease;
 }
 
 .lp-navlink:hover {
-  color: #0D0D0D;
+  color: white;
 }
 
 .lp-navlink:hover::after {
   width: 100%;
+}
+
+/* Pinned Link Styles */
+.lp-nav--pinned .lp-navlink {
+  color: #666677;
+}
+
+.lp-nav--pinned .lp-navlink::after {
+  background: #059669;
+  /* Emerald underline when pinned */
+}
+
+.lp-nav--pinned .lp-navlink:hover {
+  color: #0D0D0D;
 }
 
 .lp-nav-actions {
@@ -128,8 +151,10 @@
 }
 
 .lp-btn-ghost {
-  border: 1.5px solid #059669;
-  color: #059669;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  /* Light border on dark hero */
+  color: white;
+  /* Light text on dark hero */
   padding: 10px 22px;
   font-size: 0.88rem;
   font-weight: 600;
@@ -140,26 +165,46 @@
 }
 
 .lp-btn-ghost:hover {
+  background: white;
+  color: #0D0D0D;
+  border-color: white;
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.2);
+}
+
+/* Pinned Button Styles */
+.lp-nav--pinned .lp-btn-ghost {
+  border: 1.5px solid #059669;
+  color: #059669;
+}
+
+.lp-nav--pinned .lp-btn-ghost:hover {
   background: #059669;
   color: white;
+  border-color: #059669;
   box-shadow: 0 0 16px rgba(5, 150, 105, 0.25);
 }
 
 /* ── HERO ── */
 .lp-hero {
   min-height: 100vh;
-  display: grid;
-  grid-template-columns: 55% 1fr;
+  display: flex;
   align-items: center;
+  position: relative;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  border-bottom: 2px solid #059669;
+}
+
+.lp-hero-inner {
   max-width: 1220px;
+  width: 100%;
   margin: 0 auto;
   padding: 120px 28px 80px;
-  gap: 40px;
-  position: relative;
 }
 
 .lp-hero-text {
-  padding-right: 40px;
+  max-width: 700px;
 }
 
 .lp-eyebrow {
@@ -201,7 +246,7 @@
   font-weight: 700;
   line-height: 1.05;
   letter-spacing: -0.03em;
-  color: #0D0D0D;
+  color: white;
   margin-bottom: 24px;
 }
 
@@ -223,7 +268,7 @@
 
 .lp-hero-sub {
   font-size: 1.1rem;
-  color: #666677;
+  color: rgba(255, 255, 255, 0.85);
   max-width: 520px;
   line-height: 1.75;
   margin-bottom: 40px;
@@ -257,17 +302,17 @@
 }
 
 .lp-cta-ghost {
-  color: #666677;
+  color: rgba(255, 255, 255, 0.85);
   font-size: 0.9rem;
   font-weight: 500;
-  border-bottom: 1px solid #E8E8EE;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   padding-bottom: 2px;
   transition: all 0.2s;
 }
 
 .lp-cta-ghost:hover {
-  color: #0D0D0D;
-  border-bottom-color: #0D0D0D;
+  color: white;
+  border-bottom-color: white;
 }
 
 .lp-hero-tags {
@@ -279,11 +324,13 @@
 .lp-tag {
   font-size: 0.78rem;
   font-weight: 500;
-  color: #666677;
+  color: white;
   padding: 4px 12px;
-  border: 1px solid #E8E8EE;
-  background: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
   letter-spacing: 0.01em;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 /* ── HERO VISUAL ── */

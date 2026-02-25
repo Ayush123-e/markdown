@@ -80,44 +80,29 @@ const LandingPage = () => {
 
       {/* ── HERO ── */}
       <section className="lp-hero">
-        <div className="lp-hero-text reveal">
-          <div className="lp-eyebrow">
-            <span className="lp-eyebrow-dot" />
-            AI-Powered Study Platform
+        <div className="lp-hero-inner">
+          <div className="lp-hero-text reveal">
+            <h1 className="lp-hero-headline">
+              Master any<br />
+              video in<br />
+              <em>record time.</em>
+            </h1>
+            <p className="lp-hero-sub">
+              Stop passively watching. Start actively learning. StudySpace syncs your notes to video timestamps and gives you an AI tutor that actually understands the context.
+            </p>
+            <div className="lp-hero-ctas">
+              <Link to={isLoggedIn ? "/dashboard" : "/register"} className="lp-cta-primary">
+                <FiPlay size={16} />
+                {isLoggedIn ? "Go to Dashboard" : "Start Learning Free"}
+              </Link>
+              <a href="#how" className="lp-cta-ghost">See how it works</a>
+            </div>
+            <div className="lp-hero-tags">
+              {["Timestamp-synced notes", "AI tutor", "Download notes", "No limits"].map((t) => (
+                <span key={t} className="lp-tag">{t}</span>
+              ))}
+            </div>
           </div>
-          <h1 className="lp-hero-headline">
-            Master any<br />
-            video in<br />
-            <em>record time.</em>
-          </h1>
-          <p className="lp-hero-sub">
-            Stop passively watching. Start actively learning. StudySpace syncs your notes to video timestamps and gives you an AI tutor that actually understands the context.
-          </p>
-          <div className="lp-hero-ctas">
-            <Link to={isLoggedIn ? "/dashboard" : "/register"} className="lp-cta-primary">
-              <FiPlay size={16} />
-              {isLoggedIn ? "Go to Dashboard" : "Start Learning Free"}
-            </Link>
-            <a href="#how" className="lp-cta-ghost">See how it works</a>
-          </div>
-          <div className="lp-hero-tags">
-            {["Timestamp-synced notes", "AI tutor", "Download notes", "No limits"].map((t) => (
-              <span key={t} className="lp-tag">{t}</span>
-            ))}
-          </div>
-        </div>
-
-        <div className="lp-hero-visual reveal">
-          <div className="lp-hero-orb" />
-          <div className="lp-hero-card lp-hc-1">
-            <span className="lp-hc-icon"><FiVideo size={20} /></span>
-            <span>Video synced</span>
-          </div>
-          <div className="lp-hero-card lp-hc-2">
-            <span className="lp-hc-icon lp-hc-ai">⚡</span>
-            <span>AI Tutor ready</span>
-          </div>
-          <div className="lp-hero-bignum">E</div>
         </div>
       </section>
 
@@ -195,19 +180,6 @@ const LandingPage = () => {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── TESTIMONIAL ── */}
-      <section className="lp-quote reveal">
-        <div className="lp-quote-inner">
-          <div className="lp-quote-mark">"</div>
-          <blockquote className="lp-quote-text">{quote.text}</blockquote>
-          <div className="lp-quote-author">
-            <span className="lp-quote-neon" />
-            <strong>{quote.author}</strong>
-            <span className="lp-quote-role">{quote.role}</span>
           </div>
         </div>
       </section>
