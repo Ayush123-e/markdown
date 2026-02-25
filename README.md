@@ -1,7 +1,5 @@
 # 🎓 StudySpace
 
-![StudySpace Banner](https://images.unsplash.com/photo-1516062423079-7ca13cdc7f5a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80)
-
 StudySpace is a modern, AI-powered EdTech web application designed to help students master video content in record time. It allows users to watch educational YouTube videos while seamlessly taking timestamp-synced rich text notes and interacting with a context-aware AI tutor built right into the workspace.
 
 ## ✨ Features
