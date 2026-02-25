@@ -11,19 +11,17 @@ const SessionWorkspace = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const playerRef = useRef(null);
-  const quillRef = useRef(null);
 
   const [session, setSession] = useState(null);
   const [content, setContent] = useState("");
   const [saving, setSaving] = useState(false);
-
-  // Chat state
   const [messages, setMessages] = useState([{ role: "ai", text: "Hello! I'm your AI Study Assistant. Ask me anything about your studies." }]);
   const [input, setInput] = useState("");
-  const [notification, setNotification] = useState("");
+  const [notification, setNotification] = useState({ text: "", type: "success" });
   const [playing, setPlaying] = useState(true);
   const [chatOpen, setChatOpen] = useState(false);
   const [notesOpen, setNotesOpen] = useState(true);
+  const chatEndRef = useRef(null);
 
   const modules = {
     toolbar: [
@@ -35,319 +33,193 @@ const SessionWorkspace = () => {
     ],
   };
 
-  const fetchSession = async () => {
-    try {
-      const { data } = await api.get(`/sessions/${id}`);
-      setSession(data);
-      setContent(data.content || "");
-    } catch (error) {
-      console.error("Failed to fetch session");
-    }
-  };
-
   useEffect(() => {
+    const fetchSession = async () => {
+      try {
+        const { data } = await api.get(`/sessions/${id}`);
+        setSession(data);
+        setContent(data.content || "");
+      } catch { console.error("Failed to fetch session"); }
+    };
     fetchSession();
   }, [id]);
+
+  useEffect(() => {
+    if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const showNotification = (text, type = "success") => {
+    setNotification({ text, type });
+    setTimeout(() => setNotification({ text: "", type: "success" }), 2500);
+  };
 
   const saveSession = async () => {
     setSaving(true);
     try {
       await api.put(`/sessions/${id}`, { title: session.title, content });
-      setNotification("Session saved successfully!");
-      setTimeout(() => setNotification(""), 2000);
-    } catch (error) {
-      setNotification("Error saving session");
-      setTimeout(() => setNotification(""), 2000);
-    } finally {
-      setSaving(false);
-    }
+      showNotification("Session saved successfully!");
+    } catch {
+      showNotification("Error saving session", "error");
+    } finally { setSaving(false); }
   };
 
   const downloadNotes = () => {
-    if (!content || content.trim() === "") {
-      setNotification("No notes to download");
-      setTimeout(() => setNotification(""), 2000);
-      return;
-    }
-
-    // Create HTML content with styling
-    const htmlContent = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${session?.title || 'Study Notes'}</title>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 20px;
-      line-height: 1.6;
-      color: #333;
-    }
-    h1 {
-      color: #FF6B6B;
-      border-bottom: 3px solid #FF6B6B;
-      padding-bottom: 10px;
-    }
-    .metadata {
-      color: #6B7280;
-      font-size: 14px;
-      margin-bottom: 30px;
-    }
-    .content {
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-    }
-  </style>
-</head>
-<body>
-  <h1>${session?.title || 'Study Notes'}</h1>
-  <div class="metadata">
-    <p>Downloaded on: ${new Date().toLocaleString()}</p>
-  </div>
-  <div class="content">
-    ${content}
-  </div>
-</body>
-</html>
-    `;
-
-    // Create blob and download
-    const blob = new Blob([htmlContent], { type: 'text/html' });
+    if (!content || content.trim() === "") { showNotification("No notes to download", "error"); return; }
+    const htmlContent = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>${session?.title || 'Study Notes'}</title><style>body{font-family:-apple-system,sans-serif;max-width:800px;margin:40px auto;padding:20px;line-height:1.6;color:#333}h1{color:#E10600;border-bottom:3px solid #E10600;padding-bottom:10px}.metadata{color:#777;font-size:14px;margin-bottom:30px}</style></head><body><h1>${session?.title || 'Study Notes'}</h1><div class="metadata"><p>Downloaded: ${new Date().toLocaleString()}</p></div><div>${content}</div></body></html>`;
+    const blob = new Blob([htmlContent], { type: "text/html" });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${session?.title || 'notes'}.html`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-
-    setNotification("Notes downloaded!");
-    setTimeout(() => setNotification(""), 2000);
+    const link = document.createElement("a");
+    link.href = url; link.download = `${session?.title || "notes"}.html`;
+    document.body.appendChild(link); link.click();
+    document.body.removeChild(link); URL.revokeObjectURL(url);
+    showNotification("Notes downloaded!");
   };
-
-
 
   const handleChatSubmit = async (e) => {
     e.preventDefault();
     if (!input.trim()) return;
-
     const userMsg = { role: "user", text: input };
     const currentMessages = [...messages, userMsg];
     setMessages(currentMessages);
     setInput("");
-
     try {
-      const { data } = await api.post("/ai/chat", {
-        message: input,
-        history: messages
-      });
-
+      const { data } = await api.post("/ai/chat", { message: input, history: messages });
       setMessages([...currentMessages, { role: "ai", text: data.text }]);
     } catch (error) {
-      console.error("AI Error:", error);
-      const errMsg = error.response?.data?.message || "Sorry, I'm having trouble connecting to my brain right now.";
-      setMessages([
-        ...currentMessages,
-        { role: "ai", text: errMsg }
-      ]);
+      const errMsg = error.response?.data?.message || "Sorry, I'm having trouble connecting.";
+      setMessages([...currentMessages, { role: "ai", text: errMsg }]);
     }
   };
 
   if (!session) {
     return (
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        background: '#FAFAFA'
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{
-            display: 'inline-block',
-            width: '48px',
-            height: '48px',
-            border: '4px solid #E5E7EB',
-            borderTopColor: '#FF6B6B',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-          }}></div>
-          <p style={{ marginTop: '16px', color: '#6B7280', fontSize: '14px' }}>Loading workspace...</p>
-        </div>
-        <style>{`
-          @keyframes spin {
-            to { transform: rotate(360deg); }
-          }
-        `}</style>
+      <div className="sw-loading">
+        <div className="sw-spinner" />
+        <p>Loading workspace...</p>
       </div>
     );
   }
 
   return (
-    <div className="session-workspace">
+    <div className="sw-root">
       {/* Header */}
-      <header className="session-header">
-        <div className="session-header-left">
-          <button
-            onClick={() => navigate("/dashboard")}
-            className="session-back-btn"
-          >
+      <header className="sw-header">
+        <div className="sw-header-left">
+          <button onClick={() => navigate("/dashboard")} className="sw-back">
             <FiArrowLeft size={16} /> Back
           </button>
-          <div className="session-title-container">
-            <FiVideo size={18} style={{ color: '#FF6B6B', flexShrink: 0 }} />
-            <span className="session-title-text">
-              {session.title}
-            </span>
+          <div className="sw-header-divider" />
+          <div className="sw-header-title">
+            <FiVideo size={16} className="sw-header-title-icon" />
+            <span>{session.title}</span>
           </div>
         </div>
 
-        <div className="session-header-right">
+        <div className="sw-header-right">
           <button
             onClick={() => setNotesOpen(!notesOpen)}
-            className={`session-notes-toggle-btn ${notesOpen ? 'active' : 'inactive'}`}
+            className={`sw-btn ${notesOpen ? "sw-btn--active" : ""}`}
           >
-            <FiEdit3 size={16} /> Notes
+            <FiEdit3 size={15} /> Notes
           </button>
-
-          <button
-            onClick={downloadNotes}
-            className="session-download-btn"
-          >
-            <FiDownload size={16} /> Download
+          <button onClick={downloadNotes} className="sw-btn">
+            <FiDownload size={15} /> Download
           </button>
-
-          <button
-            onClick={saveSession}
-            disabled={saving}
-            className="session-save-btn"
-          >
-            <FiSave size={16} /> {saving ? 'Saving...' : 'Save'}
+          <button onClick={saveSession} disabled={saving} className="sw-btn sw-btn--primary">
+            <FiSave size={15} /> {saving ? "Saving..." : "Save"}
           </button>
         </div>
       </header>
 
-      {/* Main Content */}
-      <div className="session-main-content">
-        {/* Video Section - Large */}
-        <div className={`session-video-section ${notesOpen ? 'notes-open' : ''}`}>
-          <div className="session-video-container">
-            <div className="session-video-player">
-              <ReactPlayer
-                ref={playerRef}
-                url={session.videoUrl}
-                width="100%"
-                height="100%"
-                controls
-                playing={playing}
-                onPlay={() => setPlaying(true)}
-                onPause={() => setPlaying(false)}
-                config={{
-                  youtube: { playerVars: { showinfo: 1, autoplay: 1 } }
-                }}
-              />
-            </div>
+      {/* Body */}
+      <div className="sw-body">
+        {/* Video */}
+        <div className={`sw-video-panel ${notesOpen ? "sw-video-panel--split" : ""}`}>
+          <div className="sw-video-wrap">
+            <ReactPlayer
+              ref={playerRef}
+              url={session.videoUrl}
+              width="100%"
+              height="100%"
+              controls
+              playing={playing}
+              onPlay={() => setPlaying(true)}
+              onPause={() => setPlaying(false)}
+              config={{ youtube: { playerVars: { showinfo: 1, autoplay: 1 } } }}
+            />
           </div>
         </div>
 
-        {/* Notes Section */}
+        {/* Notes */}
         {notesOpen && (
-          <div className="session-notes-section">
-            <div className="session-notes-container">
-              <div className="session-notes-header">
-                <h3 className="session-notes-title">
-                  Study Notes
-                </h3>
-              </div>
-              <div className="session-notes-editor">
-                <ReactQuill
-                  ref={quillRef}
-                  theme="snow"
-                  value={content}
-                  onChange={setContent}
-                  modules={modules}
-                  placeholder="Start taking notes while watching the video..."
-                  style={{ height: 'calc(100% - 42px)' }}
-                />
-              </div>
+          <div className="sw-notes-panel">
+            <div className="sw-notes-header">
+              <h3>Study Notes</h3>
+            </div>
+            <div className="sw-notes-editor">
+              <ReactQuill
+                theme="snow"
+                value={content}
+                onChange={setContent}
+                modules={modules}
+                placeholder="Start taking notes..."
+                style={{ height: "calc(100% - 42px)" }}
+              />
             </div>
           </div>
         )}
       </div>
 
-      {/* AI Chat - Bottom Right Floating */}
+      {/* Chat Toggle Button */}
+      {!chatOpen && (
+        <button className="sw-chat-fab" onClick={() => setChatOpen(true)}>
+          <FiMessageSquare size={22} />
+        </button>
+      )}
+
+      {/* Chat Window */}
       {chatOpen && (
-        <div className="session-chat-window">
-          {/* Chat Header */}
-          <div className="session-chat-header">
-            <div className="session-chat-header-left">
-              <div className="session-chat-avatar">
-                <span style={{ fontSize: '20px' }}>🤖</span>
-              </div>
-              <div className="session-chat-title-container">
-                <h4>AI Tutor</h4>
-                <p>Powered by Gemini</p>
+        <div className="sw-chat">
+          <div className="sw-chat-header">
+            <div className="sw-chat-header-left">
+              <div className="sw-chat-avatar">⚡</div>
+              <div>
+                <strong>AI Tutor</strong>
+                <span>Powered by Gemini</span>
               </div>
             </div>
-            <button
-              onClick={() => setChatOpen(false)}
-              className="session-chat-close-btn"
-            >
+            <button onClick={() => setChatOpen(false)} className="sw-chat-close">
               <FiX size={16} />
             </button>
           </div>
 
-          {/* Messages */}
-          <div className="session-chat-messages">
+          <div className="sw-chat-messages">
             {messages.map((msg, idx) => (
-              <div
-                key={idx}
-                className={`session-chat-message ${msg.role}`}
-              >
-                <div className="session-chat-message-content">
-                  {msg.text}
-                </div>
+              <div key={idx} className={`sw-msg sw-msg--${msg.role}`}>
+                <div className="sw-msg-content">{msg.text}</div>
               </div>
             ))}
+            <div ref={chatEndRef} />
           </div>
 
-          {/* Input */}
-          <div className="session-chat-input-container">
-            <form onSubmit={handleChatSubmit} className="session-chat-input-form">
-              <input
-                value={input}
-                onChange={e => setInput(e.target.value)}
-                placeholder="Ask me anything..."
-                className="session-chat-input"
-              />
-              <button type="submit" className="session-chat-send-btn">
-                <FiSend size={16} />
-              </button>
-            </form>
-          </div>
+          <form className="sw-chat-input-wrap" onSubmit={handleChatSubmit}>
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask me anything..."
+              className="sw-chat-input"
+            />
+            <button type="submit" className="sw-chat-send">
+              <FiSend size={16} />
+            </button>
+          </form>
         </div>
       )}
 
-      {/* AI Chat Button - Bottom Right */}
-      {!chatOpen && (
-        <button
-          onClick={() => setChatOpen(true)}
-          className="session-chat-toggle-btn"
-        >
-          <FiMessageSquare size={24} style={{ color: 'white' }} />
-        </button>
-      )}
-
-      {/* Notification Toast */}
-      {notification && (
-        <div className="session-notification">
-          {notification}
+      {/* Notification */}
+      {notification.text && (
+        <div className={`sw-toast sw-toast--${notification.type}`}>
+          {notification.text}
         </div>
       )}
     </div>

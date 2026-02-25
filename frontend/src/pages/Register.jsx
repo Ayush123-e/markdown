@@ -1,7 +1,7 @@
 import { useState } from "react";
 import api from "../api";
 import { Link, useNavigate } from "react-router-dom";
-import { FiUser, FiMail, FiLock, FiUserPlus, FiVideo, FiArrowLeft } from "react-icons/fi";
+import { FiUser, FiMail, FiLock, FiArrowRight } from "react-icons/fi";
 import "./Register.css";
 
 const Register = () => {
@@ -9,127 +9,131 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
+    setLoading(true);
     try {
-      const { data } = await api.post("/auth/register", {
-        name,
-        email,
-        password,
-      });
-
+      const { data } = await api.post("/auth/register", { name, email, password });
       localStorage.setItem("token", data.token);
       navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="register-container">
-      {/* Header */}
-      <div className="register-header">
-        <Link to="/" className="register-back-btn">
-          <FiArrowLeft size={20} />
-          <span>Back to Home</span>
+    <div className="auth-split auth-split--flipped">
+      {/* Left panel - form (panels swapped vs Login) */}
+      <div className="auth-form-panel">
+        <Link to="/" className="auth-back">
+          <span>←</span> Back to Home
         </Link>
-      </div>
 
-      {/* Main Content */}
-      <div className="register-content">
-        <div className="register-form-card">
-          {/* Logo */}
-          <div className="register-logo">
-            <div className="register-logo-icon">
-              <FiVideo size={28} style={{ color: 'white' }} />
-            </div>
-            <h1 className="register-logo-title">
-              Study<span>Space</span>
-            </h1>
+        <div className="auth-form-content">
+          <div className="auth-form-header">
+            <h1>Create an account.</h1>
+            <p>Join thousands of students learning smarter.</p>
           </div>
 
-          {/* Form Header */}
-          <div className="register-form-header">
-            <h2 className="register-form-title">Create Account</h2>
-            <p className="register-form-subtitle">Join thousands of learners today</p>
-          </div>
-
-          {/* Error Message */}
           {error && (
-            <div className="register-error-box">
-              <span className="register-error-icon">⚠️</span>
-              <p className="register-error-text">{error}</p>
+            <div className="auth-error">
+              <span>⚠</span> {error}
             </div>
           )}
 
-          {/* Form */}
-          <form onSubmit={handleSubmit}>
-            <div className="register-form-group">
-              <label className="register-label">Full Name</label>
-              <div className="register-input-wrapper">
-                <FiUser className="register-input-icon" size={20} />
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="auth-field">
+              <label>Full Name</label>
+              <div className="auth-input-wrap">
+                <FiUser className="auth-input-icon" size={18} />
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="John Doe"
                   required
-                  className="register-input"
+                  className="auth-input"
                 />
               </div>
             </div>
 
-            <div className="register-form-group">
-              <label className="register-label">Email Address</label>
-              <div className="register-input-wrapper">
-                <FiMail className="register-input-icon" size={20} />
+            <div className="auth-field">
+              <label>Email Address</label>
+              <div className="auth-input-wrap">
+                <FiMail className="auth-input-icon" size={18} />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
                   required
-                  className="register-input"
+                  className="auth-input"
                 />
               </div>
             </div>
 
-            <div className="register-form-group-last">
-              <label className="register-label">Password</label>
-              <div className="register-input-wrapper">
-                <FiLock className="register-input-icon" size={20} />
+            <div className="auth-field">
+              <label>Password</label>
+              <div className="auth-input-wrap">
+                <FiLock className="auth-input-icon" size={18} />
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder="Min 6 characters"
                   required
                   minLength={6}
-                  className="register-input"
+                  className="auth-input"
                 />
               </div>
-              <p className="register-password-hint">Must be at least 6 characters</p>
             </div>
 
-            <button type="submit" className="register-submit-btn">
-              <FiUserPlus size={20} />
-              Create Account
+            <button type="submit" className="auth-submit" disabled={loading}>
+              {loading ? "Creating account..." : "Create Account"}
+              {!loading && <FiArrowRight size={18} />}
             </button>
           </form>
 
-          {/* Footer */}
-          <div className="register-footer">
-            <p className="register-footer-text">
-              Already have an account?{' '}
-              <Link to="/login" className="register-footer-link">
-                Sign in
-              </Link>
-            </p>
+          <p className="auth-switch">
+            Already have an account? <Link to="/login">Sign in</Link>
+          </p>
+        </div>
+      </div>
+
+      {/* Right panel - brand */}
+      <div className="auth-brand-panel">
+        <div className="auth-brand-content">
+          <Link to="/" className="auth-logo">
+            <div className="auth-logo-mark">S</div>
+            <span>StudySpace</span>
+          </Link>
+          <div className="auth-brand-phrase">
+            <h2>Your AI study<br />partner awaits.</h2>
+            <p>Timestamp notes, AI tutoring, and<br />video integration — all in one place.</p>
           </div>
+          <div className="auth-brand-stats">
+            <div className="auth-stat">
+              <strong>2K+</strong>
+              <span>Students</span>
+            </div>
+            <div className="auth-stat-divider" />
+            <div className="auth-stat">
+              <strong>10K+</strong>
+              <span>Sessions</span>
+            </div>
+            <div className="auth-stat-divider" />
+            <div className="auth-stat">
+              <strong>Free</strong>
+              <span>Forever</span>
+            </div>
+          </div>
+          <div className="auth-brand-geo" />
         </div>
       </div>
     </div>

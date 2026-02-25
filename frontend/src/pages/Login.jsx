@@ -1,116 +1,122 @@
 import { useState } from "react";
 import api from "../api";
 import { Link, useNavigate } from "react-router-dom";
-import { FiMail, FiLock, FiLogIn, FiVideo, FiArrowLeft } from "react-icons/fi";
+import { FiMail, FiLock, FiArrowRight } from "react-icons/fi";
 import "./Login.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
+    setLoading(true);
     try {
-      const { data } = await api.post("/auth/login", {
-        email,
-        password,
-      });
-
+      const { data } = await api.post("/auth/login", { email, password });
       localStorage.setItem("token", data.token);
       navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="login-container">
-      {/* Header */}
-      <div className="login-header">
-        <Link to="/" className="login-back-btn">
-          <FiArrowLeft size={20} />
-          <span>Back to Home</span>
-        </Link>
+    <div className="auth-split">
+      {/* Left panel - brand */}
+      <div className="auth-brand-panel">
+        <div className="auth-brand-content">
+          <Link to="/" className="auth-logo">
+            <div className="auth-logo-mark">S</div>
+            <span>StudySpace</span>
+          </Link>
+          <div className="auth-brand-phrase">
+            <h2>Learn without<br />limits.</h2>
+            <p>Paste a video. Take notes. Ask the AI.<br />That's it — no complexity.</p>
+          </div>
+          <div className="auth-brand-stats">
+            <div className="auth-stat">
+              <strong>2K+</strong>
+              <span>Students</span>
+            </div>
+            <div className="auth-stat-divider" />
+            <div className="auth-stat">
+              <strong>10K+</strong>
+              <span>Sessions</span>
+            </div>
+            <div className="auth-stat-divider" />
+            <div className="auth-stat">
+              <strong>100%</strong>
+              <span>Free</span>
+            </div>
+          </div>
+          <div className="auth-brand-geo" />
+        </div>
       </div>
 
-      {/* Main Content */}
-      <div className="login-content">
-        <div className="login-form-card">
-          {/* Logo */}
-          <div className="login-logo">
-            <div className="login-logo-icon">
-              <FiVideo size={28} style={{ color: 'white' }} />
-            </div>
-            <h1 className="login-logo-title">
-              Study<span>Space</span>
-            </h1>
+      {/* Right panel - form */}
+      <div className="auth-form-panel">
+        <Link to="/" className="auth-back">
+          <span>←</span> Back to Home
+        </Link>
+
+        <div className="auth-form-content">
+          <div className="auth-form-header">
+            <h1>Welcome back.</h1>
+            <p>Sign in to continue your learning journey.</p>
           </div>
 
-          {/* Form Header */}
-          <div className="login-form-header">
-            <h2 className="login-form-title">Welcome Back</h2>
-            <p className="login-form-subtitle">Sign in to continue your learning journey</p>
-          </div>
-
-          {/* Error Message */}
           {error && (
-            <div className="login-error-box">
-              <span className="login-error-icon">⚠️</span>
-              <p className="login-error-text">{error}</p>
+            <div className="auth-error">
+              <span>⚠</span> {error}
             </div>
           )}
 
-          {/* Form */}
-          <form onSubmit={handleSubmit}>
-            <div className="login-form-group">
-              <label className="login-label">Email Address</label>
-              <div className="login-input-wrapper">
-                <FiMail className="login-input-icon" size={20} />
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="auth-field">
+              <label>Email Address</label>
+              <div className="auth-input-wrap">
+                <FiMail className="auth-input-icon" size={18} />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
                   required
-                  className="login-input"
+                  className="auth-input"
                 />
               </div>
             </div>
 
-            <div className="login-form-group">
-              <label className="login-label">Password</label>
-              <div className="login-input-wrapper">
-                <FiLock className="login-input-icon" size={20} />
+            <div className="auth-field">
+              <label>Password</label>
+              <div className="auth-input-wrap">
+                <FiLock className="auth-input-icon" size={18} />
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="login-input"
+                  className="auth-input"
                 />
               </div>
             </div>
 
-            <button type="submit" className="login-submit-btn">
-              <FiLogIn size={20} />
-              Sign In
+            <button type="submit" className="auth-submit" disabled={loading}>
+              {loading ? "Signing in..." : "Sign In"}
+              {!loading && <FiArrowRight size={18} />}
             </button>
           </form>
 
-          {/* Footer */}
-          <div className="login-footer">
-            <p className="login-footer-text">
-              Don't have an account?{' '}
-              <Link to="/register" className="login-footer-link">
-                Create one
-              </Link>
-            </p>
-          </div>
+          <p className="auth-switch">
+            Don't have an account? <Link to="/register">Create one</Link>
+          </p>
         </div>
       </div>
     </div>
