@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import ReactPlayer from "react-player";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
+import ReactMarkdown from "react-markdown";
 import "./SessionWorkspace.css";
 import api from "../api";
 import { FiSave, FiMessageSquare, FiArrowLeft, FiX, FiSend, FiVideo, FiEdit3, FiDownload } from "react-icons/fi";
@@ -21,6 +22,7 @@ const SessionWorkspace = () => {
   const [playing, setPlaying] = useState(true);
   const [chatOpen, setChatOpen] = useState(false);
   const [notesOpen, setNotesOpen] = useState(true);
+  const [isAiTyping, setIsAiTyping] = useState(false);
   const chatEndRef = useRef(null);
 
   const modules = {
@@ -77,17 +79,21 @@ const SessionWorkspace = () => {
 
   const handleChatSubmit = async (e) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || isAiTyping) return;
     const userMsg = { role: "user", text: input };
     const currentMessages = [...messages, userMsg];
     setMessages(currentMessages);
     setInput("");
+    setIsAiTyping(true);
+
     try {
       const { data } = await api.post("/ai/chat", { message: input, history: messages });
       setMessages([...currentMessages, { role: "ai", text: data.text }]);
     } catch (error) {
       const errMsg = error.response?.data?.message || "Sorry, I'm having trouble connecting.";
       setMessages([...currentMessages, { role: "ai", text: errMsg }]);
+    } finally {
+      setIsAiTyping(false);
     }
   };
 
@@ -196,9 +202,18 @@ const SessionWorkspace = () => {
           <div className="sw-chat-messages">
             {messages.map((msg, idx) => (
               <div key={idx} className={`sw-msg sw-msg--${msg.role}`}>
-                <div className="sw-msg-content">{msg.text}</div>
+                <div className="sw-msg-content">
+                  <ReactMarkdown>{msg.text}</ReactMarkdown>
+                </div>
               </div>
             ))}
+            {isAiTyping && (
+              <div className="sw-msg sw-msg--ai">
+                <div className="sw-msg-content sw-typing-indicator">
+                  <span></span><span></span><span></span>
+                </div>
+              </div>
+            )}
             <div ref={chatEndRef} />
           </div>
 
