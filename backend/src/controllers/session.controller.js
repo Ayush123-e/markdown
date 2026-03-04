@@ -4,15 +4,19 @@ const prisma = new PrismaClient();
 
 const createSession = async (req, res) => {
   try {
-    const { title, videoUrl, thumbnail, content } = req.body;
+    const { videoUrl, thumbnail, content, title } = req.body;
     const userId = req.user.id;
+    console.log("BODY:", req.body);
+
+    // Auto-generate a title if none was provided
+    const sessionTitle = title || `Session ${new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}`;
 
     const session = await prisma.studySession.create({
       data: {
-        title,
         videoUrl,
         thumbnail,
         content,
+        title: sessionTitle,
         userId,
       },
     });
